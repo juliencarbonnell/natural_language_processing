@@ -1,0 +1,54 @@
+#from your terminal, open your jupyter notebook with an extended capacity in order to work on large content texts :
+jupyter notebook --NotebookApp.iopub_data_rate_limit=1.0e10
+
+#prepare your environment
+import pymysql
+from sqlalchemy import create_engine
+import pandas as pd
+import numpy as np
+import nltk 
+import os 
+import nltk.corpus
+import nltk.probability
+
+#import your data
+data = pd.read_csv('*/data.csv')
+data
+
+#concatenate all the rows of "description" column in one cell
+description_list = data['description'].tolist()
+description_list
+
+#convert the list into a (long) string called text
+text = str(description_list).strip('[]')
+text
+
+#normalise text in low characters
+text_low = text.lower()
+text_low
+
+# tokenise the text means cutting it into words
+from nltk.tokenize import word_tokenize
+token = word_tokenize(text_low)
+token
+
+#stop words are not meaningful
+from nltk.corpus import stopwords
+print(stopwords.words('english'))
+
+#remove stop words
+a = set(stopwords.words('english'))
+token_clean = [x for x in token if x not in a]
+print(token_clean)
+
+#remove other tokens like ",", ";", ".", ...
+b = [",", ".", ";", " ", ":", "'", "als", "&", "etc", "(", ")", "/", "[1-9]", "_", "-", "’", "--", "``", "'s", ""]
+token_cleaner = [x for x in token_clean if x not in b]
+print(token_cleaner)
+
+# To find the frequency of top 100 words
+from nltk.probability import FreqDist
+fdist = FreqDist(token_cleaner)
+fdist100 = fdist.most_common(100)
+fdist100
+
